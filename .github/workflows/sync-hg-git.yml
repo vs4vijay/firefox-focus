@@ -19,7 +19,7 @@ jobs:
 
       - name: Clone Mercurial repository
         run: |
-          hg clone https://hg.mozilla.org/mozilla-central/file/tip/mobile/android repo
+          hg clone https://hg.mozilla.org/mozilla-central/mobile/android repo
 
       - name: Pull latest changes from Mercurial
         run: |

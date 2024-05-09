@@ -19,12 +19,15 @@ jobs:
 
       - name: Clone Mercurial repository
         run: |
-          hg clone https://hg.mozilla.org/mozilla-central/mobile/android repo
-
-      - name: Pull latest changes from Mercurial
-        run: |
+          # hg clone https://hg.mozilla.org/mozilla-central/mobile/android repo
+          hg clone --noupdate https://hg.mozilla.org/mozilla-central/ repo
           cd repo
-          hg pull
+          hg update mobile/android
+
+      # - name: Pull latest changes from Mercurial
+      #   run: |
+      #     cd repo
+      #     hg pull
 
       - name: Push changes to GitHub
         env:

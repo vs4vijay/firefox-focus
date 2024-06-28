@@ -19,22 +19,21 @@ jobs:
 
       - name: Clone Mercurial repository
         run: |
-          # hg clone https://hg.mozilla.org/mozilla-central/mobile/android repo
           hg clone --noupdate https://hg.mozilla.org/mozilla-central/ repo
           cd repo
           hg update mobile/android
 
-      # - name: Pull latest changes from Mercurial
-      #   run: |
-      #     cd repo
-      #     hg pull
+      - name: Configure git user
+        run: |
+          git config --global user.email "vs4vijay@gmail.com"
+          git config --global user.name "vs4vijay"
 
       - name: Push changes to GitHub
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git init
-          git add .
-          git commit -m "Sync from Mercurial"
+          git add -A
+          git diff-index --quiet HEAD || git commit -m "Sync from Mercurial"
           git remote add origin https://github.com/vs4vijay/firefox-focus.git
           git push --force origin main

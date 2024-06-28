@@ -1,9 +1,10 @@
 name: Sync Mozilla Central Repo. to GitHub
 
 on:
-  schedule:
-    - cron: '0 0 * * *' # Run at midnight every day
   workflow_dispatch:
+  schedule:
+    # - cron: '0 0 * * *' # Run at midnight every day
+    - cron: '0 0 * * 1' # Run at every monday
 
 jobs:
   sync:

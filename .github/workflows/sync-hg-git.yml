@@ -21,7 +21,7 @@ jobs:
         run: |
           hg clone --noupdate https://hg.mozilla.org/mozilla-central/ repo
           cd repo
-          hg update mobile/android
+          # hg update mobile/android
 
       - name: Configure git user
         run: |

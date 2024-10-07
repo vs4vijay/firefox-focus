@@ -20,8 +20,9 @@ jobs:
 
       - name: Clone Mercurial repository
         run: |
-          hg clone --noupdate https://hg.mozilla.org/mozilla-central/ repo
+          hg clone --noupdate --rev=1 https://hg.mozilla.org/mozilla-central/mobile/android repo
           cd repo
+          hg update
           # hg update mobile/android
 
       - name: Configure git user

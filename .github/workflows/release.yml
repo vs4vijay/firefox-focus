@@ -1,0 +1,185 @@
+name: Build Firefox Focus
+
+on:
+  workflow_dispatch:
+    inputs:
+      version_name:
+        description: "Version Name (e.g., 138.0.1)"
+        required: true
+        default: "138.0.1"
+      version_code:
+        description: "Version Code (7-digit, e.g., 3138013 for arm64-v8a)"
+        required: true
+        default: "3138013"
+  push:
+    branches:
+      - main
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    name: Build Firefox Focus APK
+    runs-on: ubuntu-latest
+    timeout-minutes: 480  # 8 hours for full build
+
+    strategy:
+      matrix:
+        # Build for different ABIs
+        # Version code format: 3<version><abi><revision>
+        # ABI codes: 0=armeabi-v7a, 1=x86, 2=x86_64, 3=arm64-v8a, 4=universal
+        abi:
+          - name: "arm64-v8a"
+            code_suffix: "3"
+          - name: "armeabi-v7a"
+            code_suffix: "0"
+          - name: "x86_64"
+            code_suffix: "2"
+      fail-fast: false
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          submodules: 'recursive'
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: "temurin"
+          java-version: "17"
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            cmake \
+            clang \
+            nasm \
+            ninja-build \
+            patch \
+            perl \
+            python3.9 \
+            python3.9-venv \
+            wget \
+            xz-utils \
+            zlib1g-dev \
+            git \
+            curl \
+            unzip
+
+      - name: Set up Python 3.9 virtual environment
+        run: |
+          python3.9 -m venv $HOME/env
+          echo "$HOME/env/bin" >> $GITHUB_PATH
+
+      - name: Cache Rust toolchain
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cargo/bin
+            ~/.cargo/registry/index
+            ~/.cargo/registry/cache
+            ~/.cargo/git/db
+          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cargo-
+
+      - name: Cache Android SDK
+        uses: actions/cache@v4
+        with:
+          path: ~/android-sdk
+          key: ${{ runner.os }}-android-sdk-v1
+          restore-keys: |
+            ${{ runner.os }}-android-sdk-
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Determine version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            VERSION_NAME="${{ github.event.inputs.version_name }}"
+            BASE_CODE="${{ github.event.inputs.version_code }}"
+          else
+            # For automatic builds, use default version
+            VERSION_NAME="138.0.1"
+            BASE_CODE="313801"
+          fi
+
+          # Calculate version code: 3<version><abi><revision>
+          # Extract base code without ABI digit
+          BASE="${BASE_CODE:0:6}"
+          VERSION_CODE="${BASE}${{ matrix.abi.code_suffix }}0"
+
+          echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
+          echo "version_code=$VERSION_CODE" >> $GITHUB_OUTPUT
+          echo "Building version $VERSION_NAME with code $VERSION_CODE for ${{ matrix.abi.name }}"
+
+      - name: Make scripts executable
+        run: |
+          chmod +x scripts/*.sh
+
+      - name: Build Firefox Focus
+        env:
+          VERSION_NAME: ${{ steps.version.outputs.version_name }}
+          VERSION_CODE: ${{ steps.version.outputs.version_code }}
+          JAVA_HOME: ${{ env.JAVA_HOME }}
+        run: |
+          bash -x ./scripts/ci-build.sh
+
+      - name: List build artifacts
+        run: |
+          echo "Build artifacts:"
+          find artifacts -type f -name "*.apk" -o -name "*.aab"
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: firefox-focus-${{ matrix.abi.name }}-${{ steps.version.outputs.version_name }}
+          path: artifacts/apk/*.apk
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Upload build logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-logs-${{ matrix.abi.name }}
+          path: |
+            gecko/obj/config.log
+            gecko/obj/**/*.log
+          if-no-files-found: ignore
+          retention-days: 7
+
+  release:
+    name: Create Release
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
+
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Display structure of downloaded files
+        run: ls -R artifacts
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: artifacts/**/*.apk
+          draft: true
+          generate_release_notes: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

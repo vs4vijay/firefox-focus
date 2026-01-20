@@ -1,0 +1,54 @@
+#!/bin/bash
+
+SDK_REVISION=13114758
+ANDROID_SDK_FILE=commandlinetools-linux-${SDK_REVISION}_latest.zip
+
+if [[ "${ANDROID_HOME+x}" == "" ]]; then
+    export ANDROID_HOME=$HOME/android-sdk
+fi
+
+export ANDROID_SDK_ROOT="$ANDROID_HOME"
+
+if [ ! -d "$ANDROID_HOME" ]; then
+    mkdir -p "$ANDROID_HOME"
+    cd "$ANDROID_HOME/.." || exit 1
+    rm -Rf "$(basename "$ANDROID_HOME")"
+
+    # https://developer.android.com/studio/index.html#command-tools
+    echo "Downloading Android SDK..."
+    wget https://dl.google.com/android/repository/${ANDROID_SDK_FILE} -O tools-$SDK_REVISION.zip
+    rm -Rf "$ANDROID_HOME"
+    mkdir -p "$ANDROID_HOME/cmdline-tools"
+    unzip -q tools-$SDK_REVISION.zip -d "$ANDROID_HOME/cmdline-tools"
+    mv "$ANDROID_HOME/cmdline-tools/cmdline-tools" "$ANDROID_HOME/cmdline-tools/latest"
+    rm -vf tools-$SDK_REVISION.zip
+fi
+
+if [ -x "$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager" ]; then
+    SDK_MANAGER="$ANDROID_HOME/cmdline-tools/latest/bin/sdkmanager"
+elif [ -x "$ANDROID_HOME/cmdline-tools/bin/sdkmanager" ]; then
+    SDK_MANAGER="$ANDROID_HOME/cmdline-tools/bin/sdkmanager"
+else
+    echo "ERROR: no usable sdkmanager found in $ANDROID_HOME" >&2
+    echo "Checking other possible paths: (empty if not found)" >&2
+    find "$ANDROID_HOME" -type f -name sdkmanager >&2
+    return
+fi
+
+PATH=$PATH:$(dirname "$SDK_MANAGER")
+export PATH
+
+# Accept licenses
+{ yes || true; } | sdkmanager --sdk_root="$ANDROID_HOME" --licenses
+
+$SDK_MANAGER 'build-tools;35.0.1'
+$SDK_MANAGER 'ndk;28.0.13004108'
+
+export ANDROID_NDK="$ANDROID_HOME/ndk/28.0.13004108"
+[ -d "$ANDROID_NDK" ] || {
+    echo "$ANDROID_NDK does not exist."
+    return
+}
+
+echo "INFO: Using sdkmanager ... $SDK_MANAGER"
+echo "INFO: Using NDK ... $ANDROID_NDK"

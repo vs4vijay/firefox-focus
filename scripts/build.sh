@@ -63,7 +63,7 @@ echo "================================================"
 
 # Build DRFT
 # shellcheck disable=SC2154
-pushd "$drft" > /dev/null
+pushd "$focus" > /dev/null
 
 if [[ "$build_type" == "apk" ]]; then
     gradle :app:assembleRelease
@@ -71,11 +71,12 @@ if [[ "$build_type" == "apk" ]]; then
     # Find and copy APK to output directory
     APK_PATH=$(find app/build/outputs/apk/focus/release -name "*.apk" | head -n 1)
     if [ -n "$APK_PATH" ]; then
-        cp "$APK_PATH" "$APK_ARTIFACTS/"
+        APK_FILENAME="drft-$(basename "$APK_PATH" | sed 's/focus-/drft-/')"
+        cp "$APK_PATH" "$APK_ARTIFACTS/$APK_FILENAME"
         echo ""
         echo "================================================"
         echo "Build completed successfully!"
-        echo "APK location: $APK_ARTIFACTS/$(basename "$APK_PATH")"
+        echo "APK location: $APK_ARTIFACTS/$APK_FILENAME"
         echo "================================================"
     else
         echo "ERROR: APK not found after build!"
@@ -87,11 +88,12 @@ elif [[ "$build_type" == "bundle" ]]; then
     # Find and copy AAB to output directory
     AAB_PATH=$(find app/build/outputs/bundle -name "*.aab" | head -n 1)
     if [ -n "$AAB_PATH" ]; then
-        cp "$AAB_PATH" "$APK_ARTIFACTS/"
+        AAB_FILENAME="drft-$(basename "$AAB_PATH" | sed 's/focus-/drft-/')"
+        cp "$AAB_PATH" "$APK_ARTIFACTS/$AAB_FILENAME"
         echo ""
         echo "================================================"
         echo "Build completed successfully!"
-        echo "AAB location: $APK_ARTIFACTS/$(basename "$AAB_PATH")"
+        echo "AAB location: $APK_ARTIFACTS/$AAB_FILENAME"
         echo "================================================"
     else
         echo "ERROR: AAB not found after build!"

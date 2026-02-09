@@ -61,6 +61,7 @@ Your APK will be in `artifacts/apk/`
 ## Documentation
 
 - **[BUILD.md](BUILD.md)** - Comprehensive build guide
+- **[BUBBLES.md](BUBBLES.md)** - Bubble-style tabs concept and implementation
 - **[Scripts Overview](#scripts)** - Description of all build scripts
 - **[Version Codes](#version-codes)** - Understanding version code format
 

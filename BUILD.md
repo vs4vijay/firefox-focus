@@ -186,6 +186,49 @@ DRFT introduces innovative browsing features:
 - **Privacy First**: Built on Firefox's privacy-focused foundation
 - **Native Performance**: Powered by GeckoView for smooth browsing
 
+## Development Tools
+
+DRFT includes helpful development scripts:
+
+### Quick Development Setup
+```bash
+# One-time setup
+./scripts/dev.sh init
+
+# Build APK
+./scripts/dev.sh build
+
+# Install and run on device
+./scripts/dev.sh run
+
+# View logs
+./scripts/dev.sh log
+
+# Read bubble-style tabs documentation
+./scripts/dev.sh bubbles
+```
+
+### Environment Setup
+The `dev.sh init` command handles:
+- Downloading Firefox sources
+- Setting up build environment  
+- Preparing DRFT branding
+- Configuring build tools
+
+### Common Development Workflow
+```bash
+# 1. Make code changes
+# 2. Build and test
+./scripts/dev.sh build
+./scripts/dev.sh run
+
+# 3. Monitor logs
+./scripts/dev.sh log
+
+# 4. Clean when needed
+./scripts/dev.sh clean
+```
+
 ## Troubleshooting
 
 ### Out of Memory

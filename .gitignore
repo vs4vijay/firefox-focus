@@ -35,3 +35,8 @@ Thumbs.db
 *.tmp
 *.swp
 *~
+
+# DRFT Development
+dev-logs/
+bubble-cache/
+sessions/

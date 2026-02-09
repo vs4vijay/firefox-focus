@@ -99,7 +99,7 @@ popd > /dev/null
 # DRFT
 # shellcheck disable=SC2154
 echo "Configuring DRFT..."
-pushd "$drft" > /dev/null
+pushd "$focus" > /dev/null
 
 # Set version name and code
 echo "Setting version to $VERSION_NAME ($VERSION_CODE)"
@@ -107,6 +107,34 @@ sed -i \
     -e "s/versionName \"[^\"]*\"/versionName \"$VERSION_NAME\"/" \
     -e "s/versionCode [0-9]*/versionCode $VERSION_CODE/" \
     app/build.gradle
+
+# Rename app from Focus to DRFT
+echo "Rebranding app to DRFT..."
+# Update app ID in build.gradle
+sed -i -e 's/applicationId "org.mozilla.focus"/applicationId "org.mozilla.drft"/' app/build.gradle
+
+# Update app name in strings.xml
+if [ -f "app/src/main/res/values/strings.xml" ]; then
+    sed -i -e 's/Focus/DRFT/g' app/src/main/res/values/strings.xml
+    sed -i -e 's/Firefox Focus/DRFT/g' app/src/main/res/values/strings.xml
+fi
+
+# Update app name in AndroidManifest.xml
+if [ -f "app/src/main/AndroidManifest.xml" ]; then
+    sed -i -e 's/Focus/DRFT/g' app/src/main/AndroidManifest.xml
+    sed -i -e 's/org\.mozilla\.focus/org\.mozilla\.drft/g' app/src/main/AndroidManifest.xml
+fi
+
+# Update app icon references (if they exist)
+find app/src/main/res -name "*.xml" -type f -exec sed -i -e 's/focus_/drft_/g' {} \;
+
+# Update package references in source files
+find app/src/main/java -name "*.java" -o -name "*.kt" | xargs grep -l "org\.mozilla\.focus" | while read file; do
+    sed -i -e 's/org\.mozilla\.focus/org\.mozilla\.drft/g' "$file"
+done
+
+# Update app name in manifest entries
+sed -i -e 's/Focus/DRFT/g' app/src/main/AndroidManifest.xml
 
 # Disable crash reporting
 sed -i -e '/crashReporterEnabled/s/true/false/' app/build.gradle

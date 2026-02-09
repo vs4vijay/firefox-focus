@@ -59,8 +59,8 @@ jobs:
             ninja-build \
             patch \
             perl \
-            python3.9 \
-            python3.9-venv \
+            python3 \
+            python3-venv \
             wget \
             xz-utils \
             zlib1g-dev \
@@ -68,9 +68,9 @@ jobs:
             curl \
             unzip
 
-      - name: Set up Python 3.9 virtual environment
+      - name: Set up Python virtual environment
         run: |
-          python3.9 -m venv $HOME/env
+          python3 -m venv $HOME/env
           echo "$HOME/env/bin" >> $GITHUB_PATH
 
       - name: Cache Rust toolchain

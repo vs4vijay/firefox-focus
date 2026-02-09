@@ -1,12 +1,29 @@
-# DRFT (Drift Browser) Build System
+# DRFT (Drift Browser)
 
 [![Build DRFT](https://github.com/vs4vijay/DRFT/actions/workflows/release.yml/badge.svg)](https://github.com/vs4vijay/DRFT/actions/workflows/release.yml)
 
-A complete build system for compiling DRFT (Drift Browser) APK from Mozilla Central source code, with support for both local development and CI/CD workflows. DRFT reimagines mobile browsing with bubble-style tabs that preserve your current screen and mental context. Open links instantly, revisit later, and close in batches — designed for speed, calm, and focus.
+DRFT (pronounced "Drift") is a revolutionary mobile browser that reimagines web browsing with bubble-style tabs that preserve your current screen and mental context. Open links instantly, revisit later, and close in batches — designed for speed, calm, and focus.
+
+Built on Firefox's proven GeckoView engine, DRFT combines the power and compatibility of Firefox with an innovative user experience that helps you navigate the web without losing context.
+
+## Features
+
+🫧 **Bubble-Style Tabs** - Open links in floating bubbles that preserve your current context
+⚡ **Instant Navigation** - Switch between bubbles without losing your place
+🧘 **Focus Mode** - Designed to reduce cognitive load and browsing anxiety
+🔄 **Batch Operations** - Close multiple bubbles at once when you're done
+🔒 **Privacy First** - Built on Firefox's privacy-focused foundation
+📱 **Native Performance** - Powered by GeckoView for smooth, responsive browsing
 
 ## Quick Start
 
-### Local Build
+### Download Pre-built APK
+
+1. Go to the [Releases](https://github.com/vs4vijay/DRFT/releases) page
+2. Download the latest APK for your device architecture
+3. Install and enjoy DRFT!
+
+### Build from Source
 
 ```bash
 # 1. Download sources
@@ -31,7 +48,7 @@ Your APK will be in `artifacts/apk/`
 3. Enter version name (e.g., `138.0.1`) and version code (e.g., `3138013`)
 4. Download APK from artifacts when complete
 
-## Features
+## Build System Features
 
 ✅ **Automated Source Fetching** - Downloads Firefox source from Mozilla Central
 ✅ **Multi-ABI Support** - Build for arm64-v8a, armeabi-v7a, x86_64
@@ -90,11 +107,23 @@ See [BUILD.md](BUILD.md) for detailed requirements.
 ```
 DRFT/
 ├── .github/workflows/     # GitHub Actions workflows
-├── scripts/              # Build scripts
+├── scripts/              # Build scripts and utilities
 ├── IronFox/             # Reference implementation
 ├── BUILD.md             # Detailed build guide
 └── README.md            # This file
 ```
+
+## How DRFT Works
+
+DRFT introduces a revolutionary browsing paradigm with **bubble-style tabs**:
+
+1. **Open in Bubble** - Tap any link to open it in a floating bubble
+2. **Stay on Current Page** - Your original content remains visible and accessible  
+3. **Quick Switch** - Tap bubbles to instantly switch between contexts
+4. **Batch Close** - When done, close multiple bubbles at once
+5. **Pull to Refresh** - Natural mobile gestures for content updates
+
+This approach eliminates the cognitive overhead of traditional tab management, helping you browse faster and with less stress.
 
 ## Acknowledgments
 
@@ -105,7 +134,27 @@ This build system is inspired by and references:
 
 ## License
 
-Build scripts are provided as-is. Firefox and DRFT are subject to Mozilla's licenses (MPL 2.0).
+## License
+
+DRFT build scripts are provided as-is. The browser itself is based on Firefox and subject to Mozilla's licenses (MPL 2.0).
+
+## Contributing
+
+We welcome contributions! Please see our contributing guidelines for:
+- Bug reports and feature requests
+- Code contributions and pull requests
+- Build system improvements
+- Documentation updates
+
+## Support
+
+- 📖 [Documentation](BUILD.md)
+- 🐛 [Issue Tracker](https://github.com/vs4vijay/DRFT/issues)
+- 💬 [Discussions](https://github.com/vs4vijay/DRFT/discussions)
+
+---
+
+**DRFT** - Navigate the web without losing your flow. 🫧
 
 ## Contributing
 

@@ -1,10 +1,10 @@
 # DRFT (Drift Browser) Build Guide
 
-This repository contains build scripts for compiling DRFT (Drift Browser) APK from Mozilla Central source code. DRFT reimagines mobile browsing with bubble-style tabs that preserve your current screen and mental context. Open links instantly, revisit later, and close in batches — designed for speed, calm, and focus.
+This repository contains the DRFT (Drift Browser) application and build scripts for compiling it from Mozilla Central source code. DRFT reimagines mobile browsing with bubble-style tabs that preserve your current screen and mental context. Open links instantly, revisit later, and close in batches — designed for speed, calm, and focus.
 
 ## Overview
 
-The build system fetches Firefox source code from Mozilla Central's git repository and builds DRFT with customizable configurations. The scripts are designed to work both locally and in CI environments (GitHub Actions).
+DRFT is built on Firefox's proven GeckoView engine, providing excellent web compatibility and performance while introducing an innovative bubble-style tab interface. The build system fetches Firefox source code from Mozilla Central's git repository and builds DRFT with customizable configurations. The scripts are designed to work both locally and in CI environments (GitHub Actions).
 
 ## Prerequisites
 
@@ -108,7 +108,7 @@ Or to build an AAB (Android App Bundle):
 The build process will:
 1. Build GeckoView (the browser engine)
 2. Build Android Components
-3. Build DRFT app
+3. Build DRFT app with bubble-style tab interface
 4. Copy the final APK to `artifacts/apk/`
 
 ### Build Output
@@ -120,7 +120,7 @@ artifacts/apk/drft-arm64-v8a-release-unsigned.apk
 
 ## Building with CI (GitHub Actions)
 
-The repository includes a complete GitHub Actions workflow that builds DRFT automatically.
+The repository includes a complete GitHub Actions workflow that builds DRFT automatically. You can also download pre-built APKs from the [Releases](https://github.com/vs4vijay/DRFT/releases) page.
 
 ### Manual Trigger
 
@@ -158,7 +158,7 @@ DRFT/
 ├── .github/
 │   └── workflows/
 │       └── release.yml       # GitHub Actions workflow
-├── scripts/
+├── scripts/                  # Build scripts and utilities
 │   ├── versions.sh           # Version configuration
 │   ├── get_sources.sh        # Download Firefox sources
 │   ├── setup-android-sdk.sh  # Set up Android SDK/NDK
@@ -174,6 +174,17 @@ DRFT/
 │   └── aar/                  # AAR libraries
 └── BUILD.md                  # This file
 ```
+
+## DRFT Browser Features
+
+DRFT introduces innovative browsing features:
+
+- **Bubble-Style Tabs**: Open links in floating bubbles that preserve context
+- **Instant Navigation**: Switch between bubbles without losing your place  
+- **Batch Operations**: Close multiple bubbles at once
+- **Focus Mode**: Designed to reduce cognitive load and browsing anxiety
+- **Privacy First**: Built on Firefox's privacy-focused foundation
+- **Native Performance**: Powered by GeckoView for smooth browsing
 
 ## Troubleshooting
 

@@ -179,6 +179,7 @@ pushd "$mozilla_release" > /dev/null
     echo 'ac_add_options --disable-tests'
     echo 'ac_add_options --disable-updater'
     echo 'ac_add_options --enable-release'
+    echo 'ac_add_options --disable-wasm-sandboxed-libraries'
     echo "ac_add_options --with-android-sdk=\"$ANDROID_HOME\""
     echo "ac_add_options --with-android-ndk=\"$ANDROID_NDK\""
     echo 'mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/obj'

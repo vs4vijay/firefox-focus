@@ -50,5 +50,10 @@ export ANDROID_NDK="$ANDROID_HOME/ndk/28.0.13004108"
     return
 }
 
+# Set additional NDK environment variables for Firefox build
+export ANDROID_NDK_ROOT="$ANDROID_NDK"
+export ANDROID_NDK_HOME="$ANDROID_NDK"
+export NDK_TOOLCHAIN_PREFIX="$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin"
+
 echo "INFO: Using sdkmanager ... $SDK_MANAGER"
 echo "INFO: Using NDK ... $ANDROID_NDK"

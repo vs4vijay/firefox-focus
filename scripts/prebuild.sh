@@ -182,6 +182,9 @@ pushd "$mozilla_release" > /dev/null
     echo "ac_add_options --with-android-sdk=\"$ANDROID_HOME\""
     echo "ac_add_options --with-android-ndk=\"$ANDROID_NDK\""
     echo 'mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/obj'
+    echo 'export CC=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/clang'
+    echo 'export CXX=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/clang++'
+    echo 'export LD=$ANDROID_NDK/toolchains/llvm/prebuilt/linux-x86_64/bin/ld'
 } > mozconfig
 
 popd > /dev/null

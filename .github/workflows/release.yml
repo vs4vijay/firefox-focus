@@ -25,16 +25,17 @@ jobs:
 
     strategy:
       matrix:
-        # Build for different ABIs
+        # Build for Pixel 9 Pro XL (arm64-v8a) only during development
         # Version code format: 3<version><abi><revision>
         # ABI codes: 0=armeabi-v7a, 1=x86, 2=x86_64, 3=arm64-v8a, 4=universal
         abi:
           - name: "arm64-v8a"
             code_suffix: "3"
-          - name: "armeabi-v7a"
-            code_suffix: "0"
-          - name: "x86_64"
-            code_suffix: "2"
+        # TODO: Uncomment for production builds
+        # - name: "armeabi-v7a"
+        #   code_suffix: "0"
+        # - name: "x86_64"
+        #   code_suffix: "2"
       fail-fast: false
 
     steps:
@@ -110,7 +111,7 @@ jobs:
             VERSION_NAME="${{ github.event.inputs.version_name }}"
             BASE_CODE="${{ github.event.inputs.version_code }}"
           else
-            # For automatic builds, use default version
+            # For automatic builds, use default version (arm64-v8a for development)
             VERSION_NAME="138.0.1"
             BASE_CODE="313801"
           fi

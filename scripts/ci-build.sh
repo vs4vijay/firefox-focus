@@ -13,32 +13,45 @@ set -o xtrace
 : "${VERSION_CODE:?VERSION_CODE environment variable is required}"
 
 # Determine build type and ABI based on version code
+# Development: Only arm64-v8a (Pixel 9 Pro XL)
 case $(echo "$VERSION_CODE" | cut -c 7) in
-0)
-    BUILD_TYPE='apk'
-    BUILD_ABI='armeabi-v7a'
-    ;;
-1)
-    BUILD_TYPE='apk'
-    BUILD_ABI='x86'
-    ;;
-2)
-    BUILD_TYPE='apk'
-    BUILD_ABI='x86_64'
-    ;;
 3)
     BUILD_TYPE='apk'
     BUILD_ABI='arm64-v8a'
     ;;
-4)
-    BUILD_TYPE='apk'
-    BUILD_ABI='universal'
-    ;;
 *)
-    echo "Unknown target code in $VERSION_CODE." >&2
+    echo "Development build only supports arm64-v8a (code suffix 3). Got: $(echo "$VERSION_CODE" | cut -c 7)" >&2
     exit 1
     ;;
 esac
+
+# TODO: Uncomment for production builds
+# case $(echo "$VERSION_CODE" | cut -c 7) in
+# 0)
+#     BUILD_TYPE='apk'
+#     BUILD_ABI='armeabi-v7a'
+#     ;;
+# 1)
+#     BUILD_TYPE='apk'
+#     BUILD_ABI='x86'
+#     ;;
+# 2)
+#     BUILD_TYPE='apk'
+#     BUILD_ABI='x86_64'
+#     ;;
+# 3)
+#     BUILD_TYPE='apk'
+#     BUILD_ABI='arm64-v8a'
+#     ;;
+# 4)
+#     BUILD_TYPE='apk'
+#     BUILD_ABI='universal'
+#     ;;
+# *)
+#     echo "Unknown target code in $VERSION_CODE." >&2
+#     exit 1
+#     ;;
+# esac
 
 echo "================================================"
 echo "DRFT CI Build"

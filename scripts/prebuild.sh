@@ -150,29 +150,14 @@ sed -i -e '/crashReporterEnabled/s/true/false/' app/build.gradle
 sed -i -e '/telemetryEnabled/s/true/false/' app/build.gradle
 
 # Set target ABI based on version code
+# Development: Always use arm64-v8a (Pixel 9 Pro XL)
 case $(echo "$2" | cut -c 7) in
-0)
-    # APK for armeabi-v7a
-    abi='"armeabi-v7a"'
-    ;;
-1)
-    # APK for x86
-    abi='"x86"'
-    ;;
-2)
-    # APK for x86_64
-    abi='"x86_64"'
-    ;;
 3)
     # APK for arm64-v8a
     abi='"arm64-v8a"'
     ;;
-4)
-    # Universal APK with all ABIs
-    abi='"arm64-v8a", "armeabi-v7a", "x86", "x86_64"'
-    ;;
 *)
-    echo "Unknown target code in $2." >&2
+    echo "Development build only supports arm64-v8a (code suffix 3). Got: $(echo "$2" | cut -c 7)" >&2
     exit 1
     ;;
 esac
@@ -187,7 +172,7 @@ popd > /dev/null
 echo "Configuring GeckoView..."
 pushd "$mozilla_release" > /dev/null
 
-# Create mozconfig for GeckoView
+# Create mozconfig for GeckoView (simplified for compatibility)
 {
     echo 'ac_add_options --disable-crashreporter'
     echo 'ac_add_options --disable-debug'
@@ -195,20 +180,12 @@ pushd "$mozilla_release" > /dev/null
     echo 'ac_add_options --disable-tests'
     echo 'ac_add_options --disable-updater'
     echo 'ac_add_options --enable-application=mobile/android'
-    echo 'ac_add_options --enable-hardening'
     echo 'ac_add_options --enable-optimize'
     echo 'ac_add_options --enable-release'
-    echo 'ac_add_options --enable-rust-simd'
-    echo 'ac_add_options --enable-strip'
-    echo 'ac_add_options --with-android-distribution-directory=../focus-android/app'
     echo "ac_add_options --with-android-ndk=\"$ANDROID_NDK\""
     echo "ac_add_options --with-android-sdk=\"$ANDROID_HOME\""
     echo "ac_add_options --with-java-bin-path=\"$JAVA_HOME/bin\""
-    echo "ac_add_options --with-gradle=$(command -v gradle)"
     echo 'mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/obj'
-    echo 'export MOZ_CRASHREPORTER='
-    echo 'export MOZ_DATA_REPORTING='
-    echo 'export MOZ_TELEMETRY_REPORTING='
     echo 'export MOZILLA_OFFICIAL=1'
 } > mozconfig
 

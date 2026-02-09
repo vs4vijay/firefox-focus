@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Firefox Focus build script
+# DRFT build script
 # Builds the APK or AAB bundle
 #
 
@@ -58,12 +58,12 @@ popd > /dev/null
 
 echo ""
 echo "================================================"
-echo "Building Firefox Focus..."
+echo "Building DRFT..."
 echo "================================================"
 
-# Build Firefox Focus
+# Build DRFT
 # shellcheck disable=SC2154
-pushd "$focus" > /dev/null
+pushd "$drft" > /dev/null
 
 if [[ "$build_type" == "apk" ]]; then
     gradle :app:assembleRelease

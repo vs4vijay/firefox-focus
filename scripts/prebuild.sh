@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Firefox Focus prebuild script
+# DRFT prebuild script
 # Prepares the source code for building
 #
 
@@ -96,10 +96,10 @@ pushd "$android_components" > /dev/null
 localize_maven
 popd > /dev/null
 
-# Firefox Focus
+# DRFT
 # shellcheck disable=SC2154
-echo "Configuring Firefox Focus..."
-pushd "$focus" > /dev/null
+echo "Configuring DRFT..."
+pushd "$drft" > /dev/null
 
 # Set version name and code
 echo "Setting version to $VERSION_NAME ($VERSION_CODE)"
@@ -165,7 +165,7 @@ pushd "$mozilla_release" > /dev/null
     echo 'ac_add_options --enable-release'
     echo 'ac_add_options --enable-rust-simd'
     echo 'ac_add_options --enable-strip'
-    echo 'ac_add_options --with-android-distribution-directory=../focus-android/app'
+    echo 'ac_add_options --with-android-distribution-directory=../drft-android/app'
     echo "ac_add_options --with-android-ndk=\"$ANDROID_NDK\""
     echo "ac_add_options --with-android-sdk=\"$ANDROID_HOME\""
     echo "ac_add_options --with-java-bin-path=\"$JAVA_HOME/bin\""

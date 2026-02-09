@@ -1,8 +1,8 @@
-# Firefox Focus Build System
+# DRFT (Drift Browser) Build System
 
-[![Build Firefox Focus](https://github.com/your-repo/firefox-focus/actions/workflows/release.yml/badge.svg)](https://github.com/your-repo/firefox-focus/actions/workflows/release.yml)
+[![Build DRFT](https://github.com/vs4vijay/DRFT/actions/workflows/release.yml/badge.svg)](https://github.com/vs4vijay/DRFT/actions/workflows/release.yml)
 
-A complete build system for compiling Firefox Focus APK from Mozilla Central source code, with support for both local development and CI/CD workflows.
+A complete build system for compiling DRFT (Drift Browser) APK from Mozilla Central source code, with support for both local development and CI/CD workflows. DRFT reimagines mobile browsing with bubble-style tabs that preserve your current screen and mental context. Open links instantly, revisit later, and close in batches — designed for speed, calm, and focus.
 
 ## Quick Start
 
@@ -26,7 +26,7 @@ Your APK will be in `artifacts/apk/`
 
 ### GitHub Actions Build
 
-1. Go to **Actions** → **Build Firefox Focus**
+1. Go to **Actions** → **Build DRFT**
 2. Click **Run workflow**
 3. Enter version name (e.g., `138.0.1`) and version code (e.g., `3138013`)
 4. Download APK from artifacts when complete
@@ -88,7 +88,7 @@ See [BUILD.md](BUILD.md) for detailed requirements.
 ## Repository Structure
 
 ```
-firefox-focus/
+DRFT/
 ├── .github/workflows/     # GitHub Actions workflows
 ├── scripts/              # Build scripts
 ├── IronFox/             # Reference implementation
@@ -105,7 +105,7 @@ This build system is inspired by and references:
 
 ## License
 
-Build scripts are provided as-is. Firefox and Firefox Focus are subject to Mozilla's licenses (MPL 2.0).
+Build scripts are provided as-is. Firefox and DRFT are subject to Mozilla's licenses (MPL 2.0).
 
 ## Contributing
 

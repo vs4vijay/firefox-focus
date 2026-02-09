@@ -1,10 +1,10 @@
-# Firefox Focus Build Guide
+# DRFT (Drift Browser) Build Guide
 
-This repository contains build scripts for compiling Firefox Focus APK from Mozilla Central source code.
+This repository contains build scripts for compiling DRFT (Drift Browser) APK from Mozilla Central source code. DRFT reimagines mobile browsing with bubble-style tabs that preserve your current screen and mental context. Open links instantly, revisit later, and close in batches — designed for speed, calm, and focus.
 
 ## Overview
 
-The build system fetches Firefox source code from Mozilla Central's git repository and builds Firefox Focus with customizable configurations. The scripts are designed to work both locally and in CI environments (GitHub Actions).
+The build system fetches Firefox source code from Mozilla Central's git repository and builds DRFT with customizable configurations. The scripts are designed to work both locally and in CI environments (GitHub Actions).
 
 ## Prerequisites
 
@@ -108,24 +108,24 @@ Or to build an AAB (Android App Bundle):
 The build process will:
 1. Build GeckoView (the browser engine)
 2. Build Android Components
-3. Build Firefox Focus app
+3. Build DRFT app
 4. Copy the final APK to `artifacts/apk/`
 
 ### Build Output
 
 After a successful build, you'll find the APK at:
 ```
-artifacts/apk/focus-arm64-v8a-release-unsigned.apk
+artifacts/apk/drft-arm64-v8a-release-unsigned.apk
 ```
 
 ## Building with CI (GitHub Actions)
 
-The repository includes a complete GitHub Actions workflow that builds Firefox Focus automatically.
+The repository includes a complete GitHub Actions workflow that builds DRFT automatically.
 
 ### Manual Trigger
 
 1. Go to the **Actions** tab in your GitHub repository
-2. Select **Build Firefox Focus** workflow
+2. Select **Build DRFT** workflow
 3. Click **Run workflow**
 4. Enter:
    - **Version Name**: e.g., `138.0.1`
@@ -154,7 +154,7 @@ After the build completes:
 ## Directory Structure
 
 ```
-firefox-focus/
+DRFT/
 ├── .github/
 │   └── workflows/
 │       └── release.yml       # GitHub Actions workflow
@@ -242,7 +242,7 @@ Modify the mozconfig generation in `scripts/prebuild.sh` to add/remove Firefox b
 
 Version codes follow this format: `3<actual-version><abi-identifier><revision>`
 
-Examples for Firefox Focus v138.0.1:
+Examples for DRFT v138.0.1:
 - `3138010` - armeabi-v7a, initial build
 - `3138013` - arm64-v8a, initial build
 - `3138020` - x86_64, initial build
@@ -252,4 +252,4 @@ The prefix `3` distinguishes these builds. Increment the revision number (last d
 
 ## License
 
-The build scripts are provided as-is. Firefox and Firefox Focus are subject to Mozilla's licenses (MPL 2.0).
+The build scripts are provided as-is. Firefox and DRFT are subject to Mozilla's licenses (MPL 2.0).

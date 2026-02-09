@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Common environment configuration for Firefox Focus builds
+# Common environment configuration for DRFT builds
 
 export ARTIFACTS="$rootdir/artifacts"
 export APK_ARTIFACTS=$ARTIFACTS/apk

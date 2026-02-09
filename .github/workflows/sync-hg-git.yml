@@ -37,5 +37,5 @@ jobs:
           git init
           git add -A
           git diff-index --quiet HEAD || git commit -m "Sync from Mercurial"
-          git remote add origin https://github.com/vs4vijay/firefox-focus.git
+          git remote add origin https://github.com/vs4vijay/DRFT.git
           git push --force origin main

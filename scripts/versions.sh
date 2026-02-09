@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# Firefox Focus Version Configuration
+# DRFT (Drift Browser) Version Configuration
 # Based on Firefox 138.0.1
 
 # Sources
@@ -24,4 +24,4 @@ ENV_SH="${ROOTDIR}/scripts/env_local.sh"
 BUILDDIR="${ROOTDIR}/build"
 GECKODIR="${ROOTDIR}/gecko"
 ANDROID_COMPONENTS="${GECKODIR}/mobile/android/android-components"
-FOCUS="${GECKODIR}/mobile/android/focus-android"
+FOCUS="${GECKODIR}/mobile/android/drft-android"

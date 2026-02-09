@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# CI Build script for Firefox Focus
+# CI Build script for DRFT
 # This script is designed to run in GitHub Actions or similar CI environments
 #
 
@@ -41,7 +41,7 @@ case $(echo "$VERSION_CODE" | cut -c 7) in
 esac
 
 echo "================================================"
-echo "Firefox Focus CI Build"
+echo "DRFT CI Build"
 echo "Version: $VERSION_NAME ($VERSION_CODE)"
 echo "Build Type: $BUILD_TYPE"
 echo "ABI: $BUILD_ABI"
@@ -71,7 +71,7 @@ bash -x scripts/build.sh "$BUILD_TYPE"
 if [[ "$BUILD_TYPE" == "apk" ]]; then
     APK_IN="$(ls "$APK_ARTIFACTS"/*.apk | head -n 1)"
     if [ -n "$APK_IN" ]; then
-        APK_OUT="$APK_ARTIFACTS/FirefoxFocus-v${VERSION_NAME}-${BUILD_ABI}.apk"
+        APK_OUT="$APK_ARTIFACTS/DRFT-v${VERSION_NAME}-${BUILD_ABI}.apk"
         mv "$APK_IN" "$APK_OUT"
         echo "APK ready at: $APK_OUT"
     else

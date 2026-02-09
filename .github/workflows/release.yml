@@ -1,4 +1,4 @@
-name: Build Firefox Focus
+name: Build DRFT
 
 on:
   workflow_dispatch:
@@ -19,7 +19,7 @@ on:
 
 jobs:
   build:
-    name: Build Firefox Focus APK
+    name: Build DRFT APK
     runs-on: ubuntu-latest
     timeout-minutes: 480  # 8 hours for full build
 
@@ -128,7 +128,7 @@ jobs:
         run: |
           chmod +x scripts/*.sh
 
-      - name: Build Firefox Focus
+      - name: Build DRFT
         env:
           VERSION_NAME: ${{ steps.version.outputs.version_name }}
           VERSION_CODE: ${{ steps.version.outputs.version_code }}
@@ -144,7 +144,7 @@ jobs:
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: firefox-focus-${{ matrix.abi.name }}-${{ steps.version.outputs.version_name }}
+          name: drft-${{ matrix.abi.name }}-${{ steps.version.outputs.version_name }}
           path: artifacts/apk/*.apk
           if-no-files-found: error
           retention-days: 30

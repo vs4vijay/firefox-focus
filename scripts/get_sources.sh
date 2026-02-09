@@ -123,7 +123,7 @@ export rootdir=${ROOTDIR}
 export builddir="${BUILDDIR}"
 export android_components=${ANDROID_COMPONENTS}
 export mozilla_release=${GECKODIR}
-export focus=${FOCUS}
+export drft=${FOCUS}
 
 source "\$rootdir/scripts/env_common.sh"
 EOF

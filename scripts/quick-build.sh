@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Quick build script for Firefox Focus
+# Quick build script for DRFT
 # Automates the entire build process in one command
 #
 
@@ -12,7 +12,7 @@ PROJECT_ROOT="$(cd "$SCRIPT_DIR/.." && pwd)"
 cd "$PROJECT_ROOT"
 
 echo "========================================="
-echo "Firefox Focus Quick Build Script"
+echo "DRFT Quick Build Script"
 echo "========================================="
 echo ""
 

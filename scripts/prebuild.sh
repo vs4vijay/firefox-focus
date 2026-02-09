@@ -110,7 +110,8 @@ sed -i \
 
 # Rename app from Focus to DRFT
 echo "Rebranding app to DRFT..."
-# Update app ID in build.gradle
+
+# Update app ID in build.gradle (most critical)
 sed -i -e 's/applicationId "org.mozilla.focus"/applicationId "org.mozilla.drft"/' app/build.gradle
 
 # Update app name in strings.xml
@@ -119,22 +120,28 @@ if [ -f "app/src/main/res/values/strings.xml" ]; then
     sed -i -e 's/Firefox Focus/DRFT/g' app/src/main/res/values/strings.xml
 fi
 
-# Update app name in AndroidManifest.xml
+# Update package name in AndroidManifest.xml (critical for build)
 if [ -f "app/src/main/AndroidManifest.xml" ]; then
-    sed -i -e 's/Focus/DRFT/g' app/src/main/AndroidManifest.xml
+    sed -i -e 's/package="org\.mozilla\.focus"/package="org.mozilla.drft"/g' app/src/main/AndroidManifest.xml
     sed -i -e 's/org\.mozilla\.focus/org\.mozilla\.drft/g' app/src/main/AndroidManifest.xml
+    sed -i -e 's/Focus/DRFT/g' app/src/main/AndroidManifest.xml
 fi
 
-# Update app icon references (if they exist)
-find app/src/main/res -name "*.xml" -type f -exec sed -i -e 's/focus_/drft_/g' {} \;
+# Update app icon references if they exist
+find app/src/main/res -name "*.xml" -type f -exec sed -i -e 's/focus_/drft_/g' {} \; 2>/dev/null || true
 
-# Update package references in source files
-find app/src/main/java -name "*.java" -o -name "*.kt" | xargs grep -l "org\.mozilla\.focus" | while read file; do
-    sed -i -e 's/org\.mozilla\.focus/org\.mozilla\.drft/g' "$file"
+# Update key source files that are most likely to cause build issues
+KEY_FILES=(
+    "app/src/main/java/org/mozilla/focus/FocusApplication.kt"
+    "app/src/main/java/org/mozilla/focus/Components.kt"
+    "app/src/main/java/org/mozilla/focus/activity/MainActivity.kt"
+)
+
+for file in "${KEY_FILES[@]}"; do
+    if [ -f "$file" ]; then
+        sed -i -e 's/org\.mozilla\.focus/org\.mozilla\.drft/g' "$file"
+    fi
 done
-
-# Update app name in manifest entries
-sed -i -e 's/Focus/DRFT/g' app/src/main/AndroidManifest.xml
 
 # Disable crash reporting
 sed -i -e '/crashReporterEnabled/s/true/false/' app/build.gradle
@@ -193,7 +200,7 @@ pushd "$mozilla_release" > /dev/null
     echo 'ac_add_options --enable-release'
     echo 'ac_add_options --enable-rust-simd'
     echo 'ac_add_options --enable-strip'
-    echo 'ac_add_options --with-android-distribution-directory=../drft-android/app'
+    echo 'ac_add_options --with-android-distribution-directory=../focus-android/app'
     echo "ac_add_options --with-android-ndk=\"$ANDROID_NDK\""
     echo "ac_add_options --with-android-sdk=\"$ANDROID_HOME\""
     echo "ac_add_options --with-java-bin-path=\"$JAVA_HOME/bin\""

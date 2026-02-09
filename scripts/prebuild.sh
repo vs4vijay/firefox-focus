@@ -172,21 +172,16 @@ popd > /dev/null
 echo "Configuring GeckoView..."
 pushd "$mozilla_release" > /dev/null
 
-# Create mozconfig for GeckoView (simplified for compatibility)
+# Create mozconfig for GeckoView (minimal working configuration)
 {
-    echo 'ac_add_options --disable-crashreporter'
+    echo 'ac_add_options --enable-application=mobile/android'
     echo 'ac_add_options --disable-debug'
-    echo 'ac_add_options --disable-debug-symbols'
     echo 'ac_add_options --disable-tests'
     echo 'ac_add_options --disable-updater'
-    echo 'ac_add_options --enable-application=mobile/android'
-    echo 'ac_add_options --enable-optimize'
     echo 'ac_add_options --enable-release'
-    echo "ac_add_options --with-android-ndk=\"$ANDROID_NDK\""
     echo "ac_add_options --with-android-sdk=\"$ANDROID_HOME\""
-    echo "ac_add_options --with-java-bin-path=\"$JAVA_HOME/bin\""
+    echo "ac_add_options --with-android-ndk=\"$ANDROID_NDK\""
     echo 'mk_add_options MOZ_OBJDIR=@TOPSRCDIR@/obj'
-    echo 'export MOZILLA_OFFICIAL=1'
 } > mozconfig
 
 popd > /dev/null

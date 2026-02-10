@@ -16,7 +16,7 @@ FIREFOX_RELEASE_PATH="releases/${FIREFOX_TAG}"
 # Tools versions
 BUNDLETOOL_TAG="1.18.0"
 RUST_VERSION="1.83.0"
-CBINDGEN_VERSION="0.28.0"
+CBINDGEN_VERSION="0.29.2"
 
 # Directory configuration
 ROOTDIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"

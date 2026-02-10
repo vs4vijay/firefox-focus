@@ -8,41 +8,81 @@ on:
         required: true
         default: "138.0.1"
       version_code:
-        description: "Version Code (7-digit, e.g., 3138013 for arm64-v8a)"
+        description: "Version Code Base (6-digit, e.g., 313801)"
         required: true
-        default: "3138013"
+        default: "313801"
   push:
     branches:
       - main
     tags:
       - "v*"
 
+env:
+  # Reduce resource usage for CI stability
+  MACH_BUILD_JOBS: 2
+  GRADLE_OPTS: "-Dorg.gradle.daemon=false -Dorg.gradle.workers.max=2"
+
 jobs:
+  setup:
+    name: Setup Environment
+    runs-on: ubuntu-latest
+    outputs:
+      version_name: ${{ steps.version.outputs.version_name }}
+      version_base: ${{ steps.version.outputs.version_base }}
+      cache_key: ${{ steps.cache_key.outputs.key }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Determine version
+        id: version
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            VERSION_NAME="${{ github.event.inputs.version_name }}"
+            VERSION_BASE="${{ github.event.inputs.version_code }}"
+          else
+            # For automatic builds, use default version
+            VERSION_NAME="138.0.1"
+            VERSION_BASE="313801"
+          fi
+
+          echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
+          echo "version_base=$VERSION_BASE" >> $GITHUB_OUTPUT
+          echo "Building version $VERSION_NAME with base code $VERSION_BASE"
+
+      - name: Generate cache key
+        id: cache_key
+        run: |
+          echo "key=${{ runner.os }}-drft-${{ steps.version.outputs.version_name }}" >> $GITHUB_OUTPUT
+
   build:
-    name: Build DRFT APK
+    name: Build DRFT (${{ matrix.abi.name }})
+    needs: setup
     runs-on: ubuntu-latest
     timeout-minutes: 480  # 8 hours for full build
 
     strategy:
       matrix:
-        # Build for Pixel 9 Pro XL (arm64-v8a) only during development
         # Version code format: 3<version><abi><revision>
         # ABI codes: 0=armeabi-v7a, 1=x86, 2=x86_64, 3=arm64-v8a, 4=universal
         abi:
           - name: "arm64-v8a"
             code_suffix: "3"
-        # TODO: Uncomment for production builds
-        # - name: "armeabi-v7a"
-        #   code_suffix: "0"
-        # - name: "x86_64"
-        #   code_suffix: "2"
+            enabled: true
+          - name: "armeabi-v7a"
+            code_suffix: "0"
+            enabled: false  # Enable for production
+          - name: "x86_64"
+            code_suffix: "2"
+            enabled: false  # Enable for production
+        exclude:
+          - abi: { enabled: false }
       fail-fast: false
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
-        with:
-          submodules: 'recursive'
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -55,24 +95,29 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y \
             cmake \
-            clang \
+            clang-18 \
             nasm \
             ninja-build \
             patch \
             perl \
-            python3 \
-            python3-venv \
+            python3.9 \
+            python3.9-venv \
             wget \
             xz-utils \
             zlib1g-dev \
             git \
             curl \
             unzip
+          
+          # Set clang as default compiler
+          sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100
+          sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 100
 
       - name: Set up Python virtual environment
         run: |
-          python3 -m venv $HOME/env
+          python3.9 -m venv $HOME/env
           echo "$HOME/env/bin" >> $GITHUB_PATH
+          pip install --upgrade pip
 
       - name: Cache Rust toolchain
         uses: actions/cache@v4
@@ -82,16 +127,18 @@ jobs:
             ~/.cargo/registry/index
             ~/.cargo/registry/cache
             ~/.cargo/git/db
-          key: ${{ runner.os }}-cargo-${{ hashFiles('**/Cargo.lock') }}
+          key: ${{ needs.setup.outputs.cache_key }}-cargo-${{ matrix.abi.name }}
           restore-keys: |
+            ${{ needs.setup.outputs.cache_key }}-cargo-
             ${{ runner.os }}-cargo-
 
       - name: Cache Android SDK
         uses: actions/cache@v4
         with:
           path: ~/android-sdk
-          key: ${{ runner.os }}-android-sdk-v1
+          key: ${{ needs.setup.outputs.cache_key }}-android-sdk
           restore-keys: |
+            ${{ needs.setup.outputs.cache_key }}-android-sdk-
             ${{ runner.os }}-android-sdk-
 
       - name: Cache Gradle
@@ -100,70 +147,92 @@ jobs:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          key: ${{ needs.setup.outputs.cache_key }}-gradle
           restore-keys: |
+            ${{ needs.setup.outputs.cache_key }}-gradle-
             ${{ runner.os }}-gradle-
 
-      - name: Determine version
-        id: version
+      - name: Cache build outputs
+        uses: actions/cache@v4
+        with:
+          path: |
+            build/
+            gecko/objdir-frontend-android-*
+          key: ${{ needs.setup.outputs.cache_key }}-build-${{ matrix.abi.name }}
+          restore-keys: |
+            ${{ needs.setup.outputs.cache_key }}-build-
+
+      - name: Calculate version code
+        id: version_calc
         run: |
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
-            VERSION_NAME="${{ github.event.inputs.version_name }}"
-            BASE_CODE="${{ github.event.inputs.version_code }}"
-          else
-            # For automatic builds, use default version (arm64-v8a for development)
-            VERSION_NAME="138.0.1"
-            BASE_CODE="313801"
-          fi
-
-          # Calculate version code: 3<version><abi><revision>
-          # Extract base code without ABI digit
-          BASE="${BASE_CODE:0:6}"
-          VERSION_CODE="${BASE}${{ matrix.abi.code_suffix }}0"
-
-          echo "version_name=$VERSION_NAME" >> $GITHUB_OUTPUT
+          # Calculate version code: 3<version_base><abi><revision>
+          VERSION_CODE="${{ needs.setup.outputs.version_base }}${{ matrix.abi.code_suffix }}0"
           echo "version_code=$VERSION_CODE" >> $GITHUB_OUTPUT
-          echo "Building version $VERSION_NAME with code $VERSION_CODE for ${{ matrix.abi.name }}"
+          echo "Building version ${{ needs.setup.outputs.version_name }} with code $VERSION_CODE for ${{ matrix.abi.name }}"
 
       - name: Make scripts executable
         run: |
           chmod +x scripts/*.sh
 
-      - name: Build DRFT
-        env:
-          VERSION_NAME: ${{ steps.version.outputs.version_name }}
-          VERSION_CODE: ${{ steps.version.outputs.version_code }}
-          JAVA_HOME: ${{ env.JAVA_HOME }}
+      - name: Bootstrap environment
         run: |
-          bash -x ./scripts/ci-build.sh
+          bash scripts/bootstrap.sh
+
+      - name: Setup Android SDK
+        run: |
+          source scripts/env_local.sh
+          bash scripts/setup-android-sdk.sh
+
+      - name: Get sources
+        run: |
+          source scripts/env_local.sh
+          bash scripts/get_sources.sh
+
+      - name: Prepare build
+        env:
+          VERSION_NAME: ${{ needs.setup.outputs.version_name }}
+          VERSION_CODE: ${{ steps.version_calc.outputs.version_code }}
+        run: |
+          source scripts/env_local.sh
+          bash scripts/prebuild.sh "$VERSION_NAME" "$VERSION_CODE"
+
+      - name: Build APK
+        env:
+          VERSION_NAME: ${{ needs.setup.outputs.version_name }}
+          VERSION_CODE: ${{ steps.version_calc.outputs.version_code }}
+          MACH_BUILD_JOBS: ${{ env.MACH_BUILD_JOBS }}
+          GRADLE_OPTS: ${{ env.GRADLE_OPTS }}
+        run: |
+          source scripts/env_local.sh
+          bash scripts/build.sh apk 2>&1 | tee build-${{ matrix.abi.name }}.log
 
       - name: List build artifacts
         run: |
           echo "Build artifacts:"
-          find artifacts -type f -name "*.apk" -o -name "*.aab"
+          find artifacts -type f -name "*.apk" -o -name "*.aab" -o -name "*.log" | head -20
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
         with:
-          name: drft-${{ matrix.abi.name }}-${{ steps.version.outputs.version_name }}
+          name: drft-${{ matrix.abi.name }}-${{ needs.setup.outputs.version_name }}
           path: artifacts/apk/*.apk
           if-no-files-found: error
           retention-days: 30
 
-      - name: Upload build logs on failure
-        if: failure()
+      - name: Upload build logs
         uses: actions/upload-artifact@v4
         with:
           name: build-logs-${{ matrix.abi.name }}
           path: |
+            build-${{ matrix.abi.name }}.log
             gecko/obj/config.log
-            gecko/obj/**/*.log
+            artifacts/logs/
           if-no-files-found: ignore
           retention-days: 7
 
   release:
     name: Create Release
-    needs: build
+    needs: [setup, build]
     runs-on: ubuntu-latest
     if: github.event_name == 'workflow_dispatch' || startsWith(github.ref, 'refs/tags/v')
 
@@ -172,9 +241,12 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           path: artifacts
+          merge-multiple: true
 
       - name: Display structure of downloaded files
-        run: ls -R artifacts
+        run: |
+          echo "Downloaded artifacts:"
+          find artifacts -type f -name "*.apk" -exec ls -lh {} \;
 
       - name: Create Release
         uses: softprops/action-gh-release@v1
@@ -182,5 +254,35 @@ jobs:
           files: artifacts/**/*.apk
           draft: true
           generate_release_notes: true
+          name: DRFT ${{ needs.setup.outputs.version_name }}
+          body: |
+            ## DRFT ${{ needs.setup.outputs.version_name }}
+            
+            🫧 **DRFT (Drift Browser)** - Navigate the web without losing your flow.
+            
+            ### Bubble-Style Tabs
+            - Open links in floating bubbles that preserve context
+            - Switch between bubbles without losing your place  
+            - Close multiple bubbles at once
+            - Reduce cognitive load and browsing anxiety
+            
+            ### Downloads
+            Choose the APK that matches your device architecture:
+            - **arm64-v8a**: Most modern Android devices (recommended)
+            - **armeabi-v7a**: Older 32-bit ARM devices
+            - **x86_64**: Intel/AMD x86_64 devices (emulators, some tablets)
+            
+            ### Installation
+            1. Download the appropriate APK for your device
+            2. Enable "Install from unknown sources" in Android settings
+            3. Install and enjoy DRFT!
+            
+            ### Verification
+            - Package ID: `org.drft.browser`
+            - Built from Firefox ${{ needs.setup.outputs.version_name }} source
+            - Privacy-focused and open source
+            
+            ---
+            *This is an independent build and is not officially affiliated with Mozilla.*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

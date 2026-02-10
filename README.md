@@ -27,17 +27,38 @@ Built on Firefox's proven GeckoView engine, DRFT combines the power and compatib
 
 ### Build from Source
 
+#### Easy Development Setup
+
 ```bash
-# 1. Download sources
+# One-command setup for development
+./scripts/dev.sh init
+
+# Build DRFT
+./scripts/dev.sh build
+
+# Install and run on device
+./scripts/dev.sh run
+```
+
+#### Manual Build Process
+
+```bash
+# 1. Bootstrap environment (install dependencies)
+./scripts/bootstrap.sh
+
+# 2. Setup Android SDK/NDK
+./scripts/setup-android-sdk.sh
+
+# 3. Download Firefox sources
 ./scripts/get_sources.sh
 
-# 2. Set up environment
+# 4. Set up environment
 source scripts/env_local.sh
 
-# 3. Prepare for building
+# 5. Prepare for building
 ./scripts/prebuild.sh "138.0.1" "3138013"
 
-# 4. Build APK
+# 6. Build APK
 ./scripts/build.sh apk
 ```
 
@@ -47,7 +68,7 @@ Your APK will be in `artifacts/apk/`
 
 1. Go to **Actions** → **Build DRFT**
 2. Click **Run workflow**
-3. Enter version name (e.g., `138.0.1`) and version code (e.g., `3138013`)
+3. Enter version name (e.g., `138.0.1`) and version code base (e.g., `313801`)
 4. Download APK from artifacts when complete
 
 ## Build System Features
@@ -69,6 +90,13 @@ Your APK will be in `artifacts/apk/`
 
 ## Scripts
 
+### Development Helper
+| Script | Purpose |
+|--------|---------|
+| `bootstrap.sh` | Install system dependencies and set up environment |
+| `dev.sh` | Development helper (init, build, run, etc.) |
+
+### Build Scripts
 | Script | Purpose |
 |--------|---------|
 | `versions.sh` | Version configuration and directory setup |
@@ -78,6 +106,18 @@ Your APK will be in `artifacts/apk/`
 | `prebuild.sh` | Configure sources for building |
 | `build.sh` | Main build script (local use) |
 | `ci-build.sh` | CI-specific build wrapper |
+
+### Development Commands
+```bash
+./scripts/dev.sh init        # Initialize development environment
+./scripts/dev.sh build       # Build DRFT
+./scripts/dev.sh run         # Install and run on device
+./scripts/dev.sh log         # Show device logs
+./scripts/dev.sh status      # Show development status
+./scripts/dev.sh env         # Show environment variables
+./scripts/dev.sh clean       # Clean build artifacts
+./scripts/dev.sh bubbles     # Show bubble tabs documentation
+```
 
 ## Version Codes
 
@@ -97,13 +137,26 @@ Version codes follow this format: `3<version><abi><revision>`
 
 ## Requirements
 
-- **OS**: Linux (Ubuntu 22.04+) or macOS
+- **OS**: Linux (Ubuntu 22.04+), macOS, or Windows
 - **RAM**: 8GB minimum (16GB recommended)
 - **Disk**: 40GB free space
 - **Java**: JDK 17
 - **Build Time**: 2-8 hours
+- **Additional**: Git, CMake, Python 3.9+
 
 See [BUILD.md](BUILD.md) for detailed requirements.
+
+## Supported Operating Systems
+
+### ✅ Fully Supported
+- **Linux**: Ubuntu 22.04+, Fedora, Arch Linux
+- **macOS**: With Homebrew installed
+
+### 🔧 Partial Support  
+- **Windows**: Manual dependency installation required
+
+### 📱 Development
+- **Android**: For testing and development (ADB required)
 
 ## Repository Structure
 
@@ -111,6 +164,9 @@ See [BUILD.md](BUILD.md) for detailed requirements.
 DRFT/
 ├── .github/workflows/     # GitHub Actions workflows
 ├── scripts/              # Build scripts and utilities
+├── data/                 # Reference repositories (IronFox)
+├── DEVELOPMENT.md        # Development guide and sample code
+├── SAMPLE_CODE.md        # Sample implementation examples
 ├── BUILD.md             # Detailed build guide
 └── README.md            # This file
 ```

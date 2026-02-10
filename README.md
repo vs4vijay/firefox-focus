@@ -137,20 +137,23 @@ Version codes follow this format: `3<version><abi><revision>`
 
 ## Requirements
 
-- **OS**: Linux (Ubuntu 22.04+), macOS, or Windows
+- **OS**: Linux (Ubuntu 22.04), macOS, or Windows
 - **RAM**: 8GB minimum (16GB recommended)
 - **Disk**: 40GB free space
 - **Java**: JDK 17
 - **Build Time**: 2-8 hours
 - **Additional**: Git, CMake, Python 3.9+
 
+**Note**: Ubuntu 22.04 is officially supported for both local builds and GitHub Actions CI/CD.
+
 See [BUILD.md](BUILD.md) for detailed requirements.
 
 ## Supported Operating Systems
 
 ### ✅ Fully Supported
-- **Linux**: Ubuntu 22.04+, Fedora, Arch Linux
+- **Linux**: Ubuntu 22.04 (recommended), Fedora, Arch Linux
 - **macOS**: With Homebrew installed
+- **CI/CD**: GitHub Actions uses Ubuntu 22.04
 
 ### 🔧 Partial Support  
 - **Windows**: Manual dependency installation required

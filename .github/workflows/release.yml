@@ -59,7 +59,7 @@ jobs:
   build:
     name: Build DRFT (${{ matrix.abi.name }})
     needs: setup
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     timeout-minutes: 480  # 8 hours for full build
 
     strategy:
@@ -95,7 +95,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y \
             cmake \
-            clang-18 \
+            clang-14 \
             nasm \
             ninja-build \
             patch \
@@ -109,9 +109,9 @@ jobs:
             curl \
             unzip
           
-          # Set clang as default compiler
-          sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-18 100
-          sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-18 100
+          # Set clang as default compiler (Ubuntu 22.04 uses clang-14)
+          sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-14 100
+          sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-14 100
 
       - name: Set up Python virtual environment
         run: |

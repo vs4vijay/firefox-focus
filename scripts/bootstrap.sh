@@ -56,6 +56,18 @@ install_dependencies() {
     case $DRFT_OS in
         "ubuntu")
             sudo apt update
+            
+            # Check Ubuntu version to determine python version
+            UBUNTU_VERSION=$(grep DISTRIB_RELEASE /etc/lsb-release | cut -d'=' -f2)
+            
+            if [[ "$(echo "$UBUNTU_VERSION >= 22.04" | bc -l 2>/dev/null || echo "0")" -eq 1 ]] || [[ "${UBUNTU_VERSION%%.*}" -ge 22 ]]; then
+                # Ubuntu 22.04+ has python3.9 available
+                PYTHON_VERSION="python3.9"
+            else
+                # Older Ubuntu versions use default python3
+                PYTHON_VERSION="python3"
+            fi
+            
             sudo apt install -y \
                 cmake \
                 clang \
@@ -63,8 +75,8 @@ install_dependencies() {
                 ninja-build \
                 patch \
                 perl \
-                python3.9 \
-                python3.9-venv \
+                $PYTHON_VERSION \
+                ${PYTHON_VERSION}-venv \
                 wget \
                 xz-utils \
                 zlib1g-dev \

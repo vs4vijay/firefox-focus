@@ -287,10 +287,10 @@ Modify the mozconfig generation in `scripts/prebuild.sh` to add/remove Firefox b
 
 ## References
 
-- [IronFox Build System](IronFox/) - Reference implementation
 - [Firefox Build Documentation](https://firefox-source-docs.mozilla.org/setup/index.html)
 - [GeckoView Documentation](https://mozilla.github.io/geckoview/)
 - [Android Components](https://github.com/mozilla-mobile/android-components)
+- [IronFox](https://gitlab.com/ironfox-oss/IronFox) - Privacy-focused Firefox fork
 
 ## Version Code Convention
 

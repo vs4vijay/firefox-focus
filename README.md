@@ -2,7 +2,9 @@
 
 [![Build DRFT](https://github.com/vs4vijay/DRFT/actions/workflows/release.yml/badge.svg)](https://github.com/vs4vijay/DRFT/actions/workflows/release.yml)
 
-DRFT (pronounced "Drift") is a revolutionary mobile browser that reimagines web browsing with bubble-style tabs that preserve your current screen and mental context. Open links instantly, revisit later, and close in batches — designed for speed, calm, and focus.
+![DRFT Image](./DRFT.png)
+
+DRFT (pronounced "Drift") is a mobile browser that reimagines web browsing with bubble-style tabs that preserve your current screen and mental context. Open links instantly, revisit later, and close in batches — designed for speed, calm, and focus.
 
 Built on Firefox's proven GeckoView engine, DRFT combines the power and compatibility of Firefox with an innovative user experience that helps you navigate the web without losing context.
 
@@ -109,7 +111,6 @@ See [BUILD.md](BUILD.md) for detailed requirements.
 DRFT/
 ├── .github/workflows/     # GitHub Actions workflows
 ├── scripts/              # Build scripts and utilities
-├── IronFox/             # Reference implementation
 ├── BUILD.md             # Detailed build guide
 └── README.md            # This file
 ```
@@ -129,11 +130,10 @@ This approach eliminates the cognitive overhead of traditional tab management, h
 ## Acknowledgments
 
 This build system is inspired by and references:
-- [IronFox](https://gitlab.com/ironfox-oss/IronFox) - Privacy-focused Firefox fork
 - [Mozilla Firefox](https://www.mozilla.org/firefox/) - The upstream browser
 - [Android Components](https://github.com/mozilla-mobile/android-components) - Mozilla's Android component library
+- [IronFox](https://gitlab.com/ironfox-oss/IronFox) - Privacy-focused Firefox fork
 
-## License
 
 ## License
 

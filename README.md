@@ -137,29 +137,65 @@ Version codes follow this format: `3<version><abi><revision>`
 
 ## Requirements
 
-- **OS**: Linux (Ubuntu 22.04), macOS, or Windows
+- **OS**: Linux (Ubuntu 20.04/22.04), macOS, or Windows
 - **RAM**: 8GB minimum (16GB recommended)
 - **Disk**: 40GB free space
 - **Java**: JDK 17
 - **Build Time**: 2-8 hours
 - **Additional**: Git, CMake, Python 3.9+
 
-**Note**: Ubuntu 22.04 is officially supported for both local builds and GitHub Actions CI/CD.
+**Note**: Ubuntu 20.04 is the default stable version for both local builds and GitHub Actions CI/CD.
 
 See [BUILD.md](BUILD.md) for detailed requirements.
 
 ## Supported Operating Systems
 
 ### ✅ Fully Supported
-- **Linux**: Ubuntu 22.04 (recommended), Fedora, Arch Linux
+- **Linux**: Ubuntu 20.04 (recommended), Ubuntu 22.04, Fedora, Arch Linux
 - **macOS**: With Homebrew installed
-- **CI/CD**: GitHub Actions uses Ubuntu 22.04
+- **CI/CD**: GitHub Actions uses Ubuntu 20.04
 
 ### 🔧 Partial Support  
 - **Windows**: Manual dependency installation required
 
 ### 📱 Development
 - **Android**: For testing and development (ADB required)
+
+### ⚙️ Configuration Management
+
+DRFT includes a powerful configuration management system:
+
+#### Ubuntu Version Switching
+```bash
+# Switch to Ubuntu 22.04 (clang-14)
+./scripts/config.sh set 22.04
+
+# Switch to Ubuntu 20.04 (clang-10) - default
+./scripts/config.sh set 20.04
+
+# View current configuration
+./scripts/config.sh show
+
+# Reset to defaults (Ubuntu 20.04)
+./scripts/config.sh reset
+```
+
+#### Build Performance Tuning
+```bash
+# Set build job count (1-8)
+./scripts/config.sh jobs 4  # Use 4 parallel jobs
+./scripts/config.sh jobs 2  # Default, conservative
+```
+
+#### Environment Variables
+You can also set directly:
+```bash
+export DRFT_UBUNTU_VERSION=22.04  # For Ubuntu 22.04
+export DRFT_UBUNTU_VERSION=20.04  # For Ubuntu 20.04 (default)
+```
+
+#### CI/CD Configuration
+GitHub Actions uses Ubuntu 20.04 by default for maximum stability. To change for CI, edit `.github/workflows/release.yml` and change the `runs-on` value.
 
 ## Repository Structure
 
@@ -168,8 +204,10 @@ DRFT/
 ├── .github/workflows/     # GitHub Actions workflows
 ├── scripts/              # Build scripts and utilities
 ├── data/                 # Reference repositories (IronFox)
+├── .drft-config          # Configuration file (auto-generated)
 ├── DEVELOPMENT.md        # Development guide and sample code
 ├── SAMPLE_CODE.md        # Sample implementation examples
+├── CONFIG.md            # Configuration management guide
 ├── BUILD.md             # Detailed build guide
 └── README.md            # This file
 ```

@@ -55,22 +55,14 @@ install_dependencies() {
     
     case $DRFT_OS in
         "ubuntu")
+            # Source configuration
+            source "$(dirname "${BASH_SOURCE[0]}")/versions.sh"
+            
             sudo apt update
-            
-            # Check Ubuntu version to determine python version
-            UBUNTU_VERSION=$(grep DISTRIB_RELEASE /etc/lsb-release | cut -d'=' -f2)
-            
-            if [[ "$(echo "$UBUNTU_VERSION >= 22.04" | bc -l 2>/dev/null || echo "0")" -eq 1 ]] || [[ "${UBUNTU_VERSION%%.*}" -ge 22 ]]; then
-                # Ubuntu 22.04+ has python3.9 available
-                PYTHON_VERSION="python3.9"
-            else
-                # Older Ubuntu versions use default python3
-                PYTHON_VERSION="python3"
-            fi
             
             sudo apt install -y \
                 cmake \
-                clang \
+                $CLANG_VERSION \
                 nasm \
                 ninja-build \
                 patch \
@@ -87,7 +79,7 @@ install_dependencies() {
                 
             # Add Adoptium repository for Java
             wget -qO - https://packages.adoptium.net/artifactory/api/gpg/key/public | sudo gpg --dearmor -o /etc/apt/trusted.gpg.d/adoptium.gpg
-            echo "deb https://packages.adoptium.net/artifactory/deb $(awk -F= '/^VERSION_CODENAME/{print$2}' /etc/os-release) main" | sudo tee /etc/apt/sources.list.d/adoptium.list
+            echo "deb https://packages.adoptium.net/artifactory/deb $UBUNTU_CODENAME main" | sudo tee /etc/apt/sources.list.d/adoptium.list
             sudo apt update
             ;;
             

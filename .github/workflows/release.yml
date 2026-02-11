@@ -59,7 +59,7 @@ jobs:
   build:
     name: Build DRFT (${{ matrix.abi.name }})
     needs: setup
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-20.04
     timeout-minutes: 480  # 8 hours for full build
 
     strategy:
@@ -95,7 +95,7 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y \
             cmake \
-            clang-14 \
+            clang-10 \
             nasm \
             ninja-build \
             patch \
@@ -109,9 +109,9 @@ jobs:
             curl \
             unzip
           
-          # Set clang as default compiler (Ubuntu 22.04 uses clang-14)
-          sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-14 100
-          sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-14 100
+          # Set clang as default compiler (Ubuntu 20.04 uses clang-10)
+          sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-10 100
+          sudo update-alternatives --install /usr/bin/clang++ clang++ /usr/bin/clang++-10 100
 
       - name: Set up Python virtual environment
         run: |
@@ -174,6 +174,11 @@ jobs:
         run: |
           chmod +x scripts/*.sh
 
+      - name: Set environment for Ubuntu 20.04
+        run: |
+          echo "DRFT_UBUNTU_VERSION=20.04" >> $GITHUB_ENV
+          echo "Using Ubuntu 20.04 configuration"
+
       - name: Bootstrap environment
         run: |
           bash scripts/bootstrap.sh
@@ -192,6 +197,7 @@ jobs:
         env:
           VERSION_NAME: ${{ needs.setup.outputs.version_name }}
           VERSION_CODE: ${{ steps.version_calc.outputs.version_code }}
+          DRFT_UBUNTU_VERSION: "20.04"
         run: |
           source scripts/env_local.sh
           bash scripts/prebuild.sh "$VERSION_NAME" "$VERSION_CODE"
@@ -202,6 +208,7 @@ jobs:
           VERSION_CODE: ${{ steps.version_calc.outputs.version_code }}
           MACH_BUILD_JOBS: ${{ env.MACH_BUILD_JOBS }}
           GRADLE_OPTS: ${{ env.GRADLE_OPTS }}
+          DRFT_UBUNTU_VERSION: "20.04"
         run: |
           source scripts/env_local.sh
           bash scripts/build.sh apk 2>&1 | tee build-${{ matrix.abi.name }}.log
